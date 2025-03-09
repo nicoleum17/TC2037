@@ -25,26 +25,23 @@ def automata_nfa(expR):
     estado = 0
     o = 0
     for i in expR:
-        if i != '|':
-            o += 1
         if i.isalnum():
             nfa[estado] = [estado + 1 , i]
+            o += 1
             estado += 1
         elif i == '|':
-            print('|')
+            # conectar dos líneas
+            nfa[estado] = [[estado - o, '#'], [estado - (2 * o), '#']]
+            o = 0
+            estado += 1
         elif i == '.':
             print('.')
         elif i == '*':
-            # ... o más veces
-            nfa[estado] = [estado - o, '#']
-            nfa[estado] = [estado - (2 * o), '#']
-            nfa[estado + 1] = [estado , '#']
-            # cero ...
-            nfa[estado + 2] = [estado, '#']
-            nfa[estado + 1] = [estado + 3, '#']
-            nfa[estado + 2] = [estado + 3, '#']
-            o = 0
-            estado += 3
+            # saltos cero o más veces,        concatenar
+            nfa[estado] = [[estado + 1 , '#'], [estado - 2, '#']]
+            nfa[estado - 1] = [[estado - 2, '#'], [estado + 1, '#']]
+            estado += 1
+
         estado += 1
     return nfa
 
