@@ -1,0 +1,10 @@
+#lang racket
+;; sum: number number => number
+(define sum
+  (lambda (a b)
+    (+ a b) ) )
+
+;; area-of-triangle: number number => number
+(define are-of-triangle
+  (lambda (base height)
+    (/ (* base height) 2)))
