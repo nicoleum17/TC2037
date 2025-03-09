@@ -28,21 +28,21 @@ def automata_nfa(expR):
         if i.isalnum():
             nfa[estado] = [estado + 1 , i]
             o += 1
-            estado += 1
         elif i == '|':
             # conectar dos líneas
             nfa[estado] = [[estado - o, '#'], [estado - (2 * o), '#']]
             o = 0
-            estado += 1
         elif i == '.':
-            print('.')
+            nfa[estado - 1] = [estado, '#']
+            nfa[estado - 3] = [estado - 2, '#']
         elif i == '*':
             # saltos cero o más veces,        concatenar
             nfa[estado] = [[estado + 1 , '#'], [estado - 2, '#']]
             nfa[estado - 1] = [[estado - 2, '#'], [estado + 1, '#']]
-            estado += 1
+        elif i == '+':
+            nfa[estado] = [[estado + 1 , '#'], [estado - 2, '#']]
 
-        estado += 1
+        estado += 2
     return nfa
 
 alphabet = input("Alphabet: ")
