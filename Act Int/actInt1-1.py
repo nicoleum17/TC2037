@@ -1,10 +1,20 @@
+
+# .............................. FUNCIONES ....................................
+
+# ? Shuting Yard ..............................................................
+#   Convierte la expresión regular en formato infijo
+#   a formato posfijo.
+#   @param {str} regEx: la expresión regular a convertir
+#   @return {str} la expresión regular en formato posfijo
+# ? ...........................................................................
 def shunting_yard(regEx):
     precedence = {'*': 3, '+': 3, '.': 2, '|': 1}
     output = []
     stack = []
 
     for i in regEx:
-        if i.isalnum():
+        if i.isalnum(): 
+            # 
             output.append(i)
         elif i == '(':
             stack.append(i) 
@@ -20,6 +30,12 @@ def shunting_yard(regEx):
         output.append(stack.pop())
     return ''.join(output)
 
+# ? Automata_Nfa ..............................................................
+#   Convierte la expresión regular en formato posfijo
+#   a un automata no determinista finito (NFA).
+#   @param {str} regEx: la expresión regular en posfijo
+#   @return {str} el automata NFA
+# ? ...........................................................................
 def automata_nfa(regEx):
     stack = []
     estado = 0
@@ -76,7 +92,12 @@ def automata_nfa(regEx):
     nfa, start, end = stack.pop()
     return nfa, start, end
 
-def bubbleSortDict(nfa):
+# ? Bubble Sort ...............................................................
+#   Ordena el nfa de menor a mayor.
+#   @param {str} nfa: el automata NFA
+#   @return {str} el nfa con los estados ordenados.
+# ? ...........................................................................
+def bubbleSort(nfa):
     keys = list(nfa.keys())
     n = len(keys)
     
@@ -87,22 +108,27 @@ def bubbleSortDict(nfa):
             if keys[j] > keys[j + 1]:
                 keys[j], keys[j + 1] = keys[j + 1], keys[j]
                 swapped = True
-        
+    
         if not swapped:
             break
     
-    # Retornamos un diccionario ordenado por el número de transiciones
+    # Volvemos al diccionario 
     return {key: nfa[key] for key in keys}
+
+# ............................... CODIGO ......................................
 
 alphabet = input("Alphabet: ")
 regEx = input("RegEx: ")
 posExp = shunting_yard(regEx)
-print("Postfix Expression:", posExp)
+
+print("----RESULTS----")
+print("INPUT:")
+print(regEx)
+
 nfa, start, end = automata_nfa(posExp)
 print("NFA: \n", nfa)
-print("Start State:", start)
-print("End State:", end)
-nfa = bubbleSortDict(nfa)
+print("Accepting state: ", end)
+nfa = bubbleSort(nfa)
 
 for i in nfa:
     print(i, "=>", nfa[i])
