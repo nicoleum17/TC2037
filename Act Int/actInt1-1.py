@@ -1,5 +1,5 @@
 def shunting_yard(regEx):
-    precedence = {'*': 4, '+': 4, '.': 3, '|': 2, '(': 1}
+    precedence = {'*': 3, '+': 3, '.': 2, '|': 1}
     output = []
     stack = []
 
@@ -76,6 +76,24 @@ def automata_nfa(regEx):
     nfa, start, end = stack.pop()
     return nfa, start, end
 
+def bubbleSortDict(nfa):
+    keys = list(nfa.keys())
+    n = len(keys)
+    
+    for i in range(n):
+        swapped = False
+        
+        for j in range(0, n - i - 1):
+            if keys[j] > keys[j + 1]:
+                keys[j], keys[j + 1] = keys[j + 1], keys[j]
+                swapped = True
+        
+        if not swapped:
+            break
+    
+    # Retornamos un diccionario ordenado por el número de transiciones
+    return {key: nfa[key] for key in keys}
+
 alphabet = input("Alphabet: ")
 regEx = input("RegEx: ")
 posExp = shunting_yard(regEx)
@@ -84,3 +102,7 @@ nfa, start, end = automata_nfa(posExp)
 print("NFA: \n", nfa)
 print("Start State:", start)
 print("End State:", end)
+nfa = bubbleSortDict(nfa)
+
+for i in nfa:
+    print(i, "=>", nfa[i])
