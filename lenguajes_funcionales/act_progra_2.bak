@@ -1,0 +1,8 @@
+#lang racket
+(define fahrenheit-to-celsius
+  (lambda (fahrenheit)
+    (/(* 5(- fahrenheit 32)) 9)))
+
+(define roots
+  (lambda (a b c)
+    (/ (- (+ (sqrt (- (* b b) (* 4 a c)))) b) (* 2 a))))
