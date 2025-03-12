@@ -6,7 +6,38 @@
 #       A01711853
 #       14/03/25
 
-# *.............................. FUNCIONES ....................................
+# *.............................. FUNCIONES ...................................
+
+# ? Agregar Concatenacion .....................................................
+#   Agrega la concatenación a la expresión regular.
+#   @param {str} expresion: la expresión regular a concatenar
+#   @return {str} la expresión regular en formato con concatenacion explicita
+# ? ...........................................................................
+
+def agregar_concatenacion(expresion):
+    salida = ""
+    operadores = {'|', '*', '+', '?', '('}  # Operadores que no requieren concatenación antes
+    
+    for i in range(len(expresion)):
+        actual = expresion[i]
+        salida += actual
+        
+        # Si no es el último carácter, revisamos si se requiere concatenación
+        if i < len(expresion) - 1:
+            siguiente = expresion[i + 1]
+            
+            # Se agrega '.' si:
+            # 1. Un paréntesis de cierre es seguido por un paréntesis de apertura o un símbolo
+            # 2. Un símbolo es seguido por otro símbolo o un paréntesis de apertura
+            # 3. Un operador de cierre (*, +, ?) es seguido por un símbolo o un paréntesis de apertura
+            if (actual not in operadores and siguiente not in {'|', ')', '*', '+'}) or \
+               (actual in {'*', '+'} and i < len(expresion) - 1) or \
+               (actual in {'*', '+', '?'} and siguiente not in operadores and siguiente not in {')', '|', '+'}) or \
+               (actual == ')' and siguiente not in {'|', ')', '*', '+'}) or \
+               (actual == '*' and siguiente not in operadores and siguiente != ')'):
+                salida += '.'
+    
+    return salida
 
 # ? Shuting Yard ..............................................................
 #   Convierte la expresión regular en formato infijo
@@ -176,7 +207,6 @@ def to_dfa(nfa, start, end, alphabet):
     conjunto, aceptacion_edo = e_clousure(nfa, start, end)
     print(conjunto, aceptacion_edo)
     
-
     for valor in alphabet:
         nuevo_conjunto = set()
         for estado in conjunto :
@@ -194,7 +224,7 @@ def to_dfa(nfa, start, end, alphabet):
 
 alphabet = input("Alphabet: ")
 regEx = input("RegEx: ")
-posExp = shunting_yard(regEx)
+posExp = shunting_yard(agregar_concatenacion(regEx))
 
 print("\n----RESULTS----")
 print("INPUT:")
