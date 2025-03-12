@@ -74,7 +74,7 @@ def shunting_yard(regEx):
 #   @param {str} regEx: la expresión regular en posfijo
 #   @return {str} el automata NFA
 # ? ...........................................................................
-def automata_nfa(regEx):
+def regEx_to_nfa(regEx):
     stack = []
     estado = 0
 
@@ -135,7 +135,7 @@ def automata_nfa(regEx):
 #   @param {str} nfa: el automata NFA
 #   @return {str} el nfa con los estados ordenados.
 # ? ...........................................................................
-def bubbleSort(nfa):
+def bubble_Sort(nfa):
     keys = list(nfa.keys())
     n = len(keys)
     
@@ -159,7 +159,7 @@ def bubbleSort(nfa):
 #   @param {str} nfa: el automata NFA
 #   @return {str} el NFA con el clousure de epsilon cerrado.
 # ? ...........................................................................
-def e_clousure(nfa, start, end):
+def e_closure(nfa, start, end):
     conjunto = set()
     transiciones = list(nfa[start])  #! Para no modificarla
     aceptacion = False
@@ -195,7 +195,7 @@ def e_clousure(nfa, start, end):
 #   @return {str} el automata DFA
 # ? ...........................................................................
 
-def to_dfa(nfa, start, end, alphabet):
+def nfa_to_dfa(nfa, start, end, alphabet):
     # Diccionario del DFA
     dfa = {}
 
@@ -230,14 +230,14 @@ print("\n----RESULTS----")
 print("INPUT:")
 print(regEx)
 
-nfa, start, end = automata_nfa(posExp)
-nfa = bubbleSort(nfa)
+nfa, start, end = regEx_to_nfa(posExp)
+nfa = bubble_Sort(nfa)
 
 print("\nNFA:")
 for i in nfa:
     print(i, "=>", nfa[i])
 print("Accepting state: ", end, "\n");
 
-parcials = to_dfa(nfa, start, end, alphabet)
+parcials = nfa_to_dfa(nfa, start, end, alphabet)
 
 print("DFA: \n", parcials)
