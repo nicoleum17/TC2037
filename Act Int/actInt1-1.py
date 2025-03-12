@@ -1,5 +1,12 @@
 
-# .............................. FUNCIONES ....................................
+# *..........................Actividad Integradora 1...........................
+#   Convertir una expresión regular a DFA
+# 
+#   By: Joanna Nicole Uriostegui Magaña
+#       A01711853
+#       14/03/25
+
+# *.............................. FUNCIONES ....................................
 
 # ? Shuting Yard ..............................................................
 #   Convierte la expresión regular en formato infijo
@@ -115,20 +122,112 @@ def bubbleSort(nfa):
     # Volvemos al diccionario 
     return {key: nfa[key] for key in keys}
 
-# ............................... CODIGO ......................................
+
+# ? Cerrando el clousure de epsilon ...............................................
+#   Cerramos el clousure de epsilon para el NFA.
+#   @param {str} nfa: el automata NFA
+#   @return {str} el NFA con el clousure de epsilon cerrado.
+# ? ...........................................................................
+def e_clousure(nfa, start, end):
+    conjunto = set()
+    transiciones = list(nfa[start])  #! Para no modificarla
+    aceptacion = False
+
+    conjunto.add(start)
+
+    while transiciones: 
+        # Sacamos solo un estado
+        siguiente_estado, simbolo = transiciones.pop(0)  
+        
+        while simbolo == "#":  # Mientras el valor sea epsilon
+            if(siguiente_estado == end): aceptacion = True
+
+            # Sacamos el siguiente estado
+            conjunto.add(siguiente_estado) 
+            
+            # Ver si hay más transcisiones
+            if siguiente_estado in nfa:
+                transiciones.extend(nfa[siguiente_estado])
+            
+            if not transiciones:  # Salir del while
+                break
+
+            siguiente_estado, simbolo = transiciones.pop(0)  # Siguiente
+
+    return conjunto, aceptacion
+
+    
+
+# ? NFA a DFA ...............................................................
+#   Convierte el NFA a DFA
+#   @param {str} nfa: el automata NFA
+#   @return {str} el automata DFA
+# ? ...........................................................................
+
+def to_dfa(nfa, start, end, alphabet):
+    # Diccionario del DFA
+    dfa = {}
+
+    conjuntos = {}
+    aceptacion_edo = set()
+    conjunto = set()
+    transiciones = list(nfa[start])  #! Para no modificarla
+
+    conjunto, aceptacion_edo = e_clousure(nfa, start, end)
+    print(conjunto, aceptacion_edo)
+    # conjuntos[0].append(conjunto)
+    # if(aceptacion_edo):
+    #     aceptacion_edo.add(conjunto)
+
+    next = {}
+    for valor in alphabet:
+        next[valor] = set()
+        for  estado in conjunto :
+            siguiente_estado, simbolo = nfa[estado]
+            if simbolo == valor:
+                next[valor].add(siguiente_estado)
+        print(next[valor])
+            
+
+
+
+    #! Esto creo que si sirve, algo de lógica
+    # siguiente_estado, simbolo = transiciones.pop(0) 
+
+    # start = siguiente_estado
+
+    # conjunto, aceptacion_edo = e_clousure(nfa, start, end)
+    # print(conjunto, aceptacion_edo)
+    #! ......................................................
+
+    # for i in conjuntos:
+    #     dfa[i] = {}
+    #     for simbolo in alphabet:
+    #         conjunto, aceptacion = e_clousure(nfa, i, end, simbolo)
+    #         dfa[i][simbolo] = conjunto
+    #         if aceptacion:
+    #             dfa[i] = conjunto
+    # return dfa
+  
+
+# *............................... CODIGO ......................................
 
 alphabet = input("Alphabet: ")
 regEx = input("RegEx: ")
 posExp = shunting_yard(regEx)
 
-print("----RESULTS----")
+print("\n----RESULTS----")
 print("INPUT:")
 print(regEx)
 
 nfa, start, end = automata_nfa(posExp)
-print("NFA: \n", nfa)
-print("Accepting state: ", end)
 nfa = bubbleSort(nfa)
 
+print("\nNFA:")
 for i in nfa:
     print(i, "=>", nfa[i])
+print("Accepting state: ", end, "\n");
+
+parcials = to_dfa(nfa, start, end, alphabet)
+
+print("DFA: \n", parcials)
