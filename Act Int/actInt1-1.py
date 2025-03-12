@@ -204,7 +204,7 @@ def nfa_to_dfa(nfa, start, end, alphabet):
     conjunto = set()
     transiciones = list(nfa[start])  #! Para no modificarla
 
-    conjunto, aceptacion_edo = e_clousure(nfa, start, end)
+    conjunto, aceptacion_edo = e_closure(nfa, start, end)
     print(conjunto, aceptacion_edo)
     
     for valor in alphabet:
@@ -215,7 +215,7 @@ def nfa_to_dfa(nfa, start, end, alphabet):
                     nuevo_conjunto.add(siguiente_estado)
         print(nuevo_conjunto)
         for i in nuevo_conjunto:
-            conjunto, aceptacion_edo = e_clousure(nfa, i, end)
+            conjunto, aceptacion_edo = e_closure(nfa, i, end)
             print(conjunto, aceptacion_edo)
 
         
