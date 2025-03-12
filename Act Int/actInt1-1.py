@@ -175,40 +175,20 @@ def to_dfa(nfa, start, end, alphabet):
 
     conjunto, aceptacion_edo = e_clousure(nfa, start, end)
     print(conjunto, aceptacion_edo)
-    # conjuntos[0].append(conjunto)
-    # if(aceptacion_edo):
-    #     aceptacion_edo.add(conjunto)
+    
 
-    next = {}
     for valor in alphabet:
-        next[valor] = set()
-        for  estado in conjunto :
-            siguiente_estado, simbolo = nfa[estado]
-            if simbolo == valor:
-                next[valor].add(siguiente_estado)
-        print(next[valor])
-            
+        nuevo_conjunto = set()
+        for estado in conjunto :
+            for siguiente_estado, simbolo in nfa[estado]:
+                if valor == simbolo:
+                    nuevo_conjunto.add(siguiente_estado)
+        print(nuevo_conjunto)
+        for i in nuevo_conjunto:
+            conjunto, aceptacion_edo = e_clousure(nfa, i, end)
+            print(conjunto, aceptacion_edo)
 
-
-
-    #! Esto creo que si sirve, algo de lógica
-    # siguiente_estado, simbolo = transiciones.pop(0) 
-
-    # start = siguiente_estado
-
-    # conjunto, aceptacion_edo = e_clousure(nfa, start, end)
-    # print(conjunto, aceptacion_edo)
-    #! ......................................................
-
-    # for i in conjuntos:
-    #     dfa[i] = {}
-    #     for simbolo in alphabet:
-    #         conjunto, aceptacion = e_clousure(nfa, i, end, simbolo)
-    #         dfa[i][simbolo] = conjunto
-    #         if aceptacion:
-    #             dfa[i] = conjunto
-    # return dfa
-  
+        
 
 # *............................... CODIGO ......................................
 
