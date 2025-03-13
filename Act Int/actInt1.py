@@ -146,7 +146,11 @@ def bubble_Sort(nfa):
     # Volvemos al diccionario 
     return {key: nfa[key] for key in keys}
 
-
+# ? Cerrandura epsilon.........................................................
+#   Cerramos el clousure de epsilon para el NFA.
+#   @param {str} nfa: el automata NFA
+#   @return {str} el NFA con el clousure de epsilon cerrado.
+# ? ...........................................................................
 def e_closure(nfa, estados):
     """ Calcula la cerradura epsilon de un conjunto de estados """
     closure = set(estados)
@@ -162,6 +166,11 @@ def e_closure(nfa, estados):
     
     return closure
 
+# ? Move.......................................................................
+#   Por cada símbolo en el alfabeto, se mueve a la siguiente transición
+#   @param {str} nfa: el automata NFA
+#   @return {str} el NFA con el clousure de epsilon cerrado.
+# ? ...........................................................................
 def move(nfa, estados, simbolo):
     """ Devuelve el conjunto de estados alcanzables desde `estados` con `simbolo` """
     resultado = set()
@@ -172,6 +181,11 @@ def move(nfa, estados, simbolo):
                     resultado.add(siguiente)
     return resultado
 
+# ? NFA a DFA .................................................................
+#   Convierte el NFA a DFA
+#   @param {str} nfa: el automata NFA
+#   @return {str} el automata DFA
+# ? ...........................................................................
 def nfa_to_dfa(nfa, start, end, alphabet):
     """ Convierte un NFA a DFA usando el algoritmo de e-closure """
     dfa = {}
