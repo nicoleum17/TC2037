@@ -141,12 +141,10 @@ def bubble_Sort(nfa):
     
     for i in range(n):
         swapped = False
-        
         for j in range(0, n - i - 1):
             if keys[j] > keys[j + 1]:
                 keys[j], keys[j + 1] = keys[j + 1], keys[j]
                 swapped = True
-    
         if not swapped:
             break
     
@@ -164,8 +162,10 @@ def e_closure(nfa, start, end):
     transiciones = list(nfa[start])  #! Para no modificarla
     aceptacion = False
 
+    # Agregamos el estado inicial al conjunto (porque es e-closure)
     conjunto.add(start)
 
+    # Recorremos las transiciones del estado
     while transiciones: 
         # Sacamos solo un estado
         siguiente_estado, simbolo = transiciones.pop(0)  
@@ -187,26 +187,28 @@ def e_closure(nfa, start, end):
 
     return conjunto, aceptacion
 
+# ? Move.......................................................................
+#   Por cada símbolo en el alfabeto, se mueve a la siguiente transición
+#   @param {str} nfa: el automata NFA
+#   @return {str} el NFA con el clousure de epsilon cerrado.
+# ? ...........................................................................
 def move (alphabet, conjunto, nfa):
     for valor in alphabet:
-        nuevo_conjunto = set()
-        for estado in conjunto :
+        nuevo_conjunto = set() # Conjunto vacio para almacenar los nuevos estados
+        for estado in conjunto: 
             for siguiente_estado, simbolo in nfa[estado]:
-                if valor == simbolo:
+                if valor == simbolo: # Verificamos que se pueda hacer el move
                     nuevo_conjunto.add(siguiente_estado)
         print(nuevo_conjunto)
 
 
-# ? NFA a DFA ...............................................................
+# ? NFA a DFA .................................................................
 #   Convierte el NFA a DFA
 #   @param {str} nfa: el automata NFA
 #   @return {str} el automata DFA
 # ? ...........................................................................
 
 def nfa_to_dfa(nfa, start, end, alphabet):
-    # Diccionario del DFA
-    dfa = {}
-
     conjuntos = {}
     aceptacion_edo = set()
     conjunto = set()
@@ -220,10 +222,6 @@ def nfa_to_dfa(nfa, start, end, alphabet):
     for i in nuevo_conjunto:
         conjunto, aceptacion_edo = e_closure(nfa, i, end)
         print(conjunto, aceptacion_edo)
-    
-    
-
-        
 
 # *............................... CODIGO ......................................
 
