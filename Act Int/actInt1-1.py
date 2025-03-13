@@ -1,6 +1,6 @@
 
 # *..........................Actividad Integradora 1...........................
-#   Convertir una expresión regular a DFA
+#   Convertir una expresión regular a NFA y luego aDFA
 # 
 #   By: Joanna Nicole Uriostegui Magaña
 #       A01711853
@@ -27,9 +27,9 @@ def agregar_concatenacion(expresion):
             siguiente = expresion[i + 1]
             
             # Se agrega '.' si:
-            # 1. Un paréntesis de cierre es seguido por un paréntesis de apertura o un símbolo
-            # 2. Un símbolo es seguido por otro símbolo o un paréntesis de apertura
-            # 3. Un operador de cierre (*, +, ?) es seguido por un símbolo o un paréntesis de apertura
+            # 1. Un ( es seguido por un ) o un símbolo
+            # 2. Un símbolo es seguido por otro símbolo o un (
+            # 3. Un operador de cierre (*, +, ?) es seguido por un símbolo o un ()
             if (actual not in operadores and siguiente not in {'|', ')', '*', '+'}) or \
                (actual in {'*', '+'} and i < len(expresion) - 1) or \
                (actual in {'*', '+', '?'} and siguiente not in operadores and siguiente not in {')', '|', '+'}) or \
@@ -68,7 +68,7 @@ def shunting_yard(regEx):
         output.append(stack.pop())
     return ''.join(output)
 
-# ? Automata_Nfa ..............................................................
+# ? RegEx to NFA...............................................................
 #   Convierte la expresión regular en formato posfijo
 #   a un automata no determinista finito (NFA).
 #   @param {str} regEx: la expresión regular en posfijo
@@ -154,7 +154,7 @@ def bubble_Sort(nfa):
     return {key: nfa[key] for key in keys}
 
 
-# ? Cerrando el clousure de epsilon ...............................................
+# ? Cerrandura epsilon.........................................................
 #   Cerramos el clousure de epsilon para el NFA.
 #   @param {str} nfa: el automata NFA
 #   @return {str} el NFA con el clousure de epsilon cerrado.
@@ -187,7 +187,15 @@ def e_closure(nfa, start, end):
 
     return conjunto, aceptacion
 
-    
+def move (alphabet, conjunto, nfa):
+    for valor in alphabet:
+        nuevo_conjunto = set()
+        for estado in conjunto :
+            for siguiente_estado, simbolo in nfa[estado]:
+                if valor == simbolo:
+                    nuevo_conjunto.add(siguiente_estado)
+        print(nuevo_conjunto)
+
 
 # ? NFA a DFA ...............................................................
 #   Convierte el NFA a DFA
@@ -206,17 +214,14 @@ def nfa_to_dfa(nfa, start, end, alphabet):
 
     conjunto, aceptacion_edo = e_closure(nfa, start, end)
     print(conjunto, aceptacion_edo)
+
+    nuevo_conjunto = move(alphabet, conjunto, nfa)
+
+    for i in nuevo_conjunto:
+        conjunto, aceptacion_edo = e_closure(nfa, i, end)
+        print(conjunto, aceptacion_edo)
     
-    for valor in alphabet:
-        nuevo_conjunto = set()
-        for estado in conjunto :
-            for siguiente_estado, simbolo in nfa[estado]:
-                if valor == simbolo:
-                    nuevo_conjunto.add(siguiente_estado)
-        print(nuevo_conjunto)
-        for i in nuevo_conjunto:
-            conjunto, aceptacion_edo = e_closure(nfa, i, end)
-            print(conjunto, aceptacion_edo)
+    
 
         
 
@@ -240,4 +245,8 @@ print("Accepting state: ", end, "\n");
 
 parcials = nfa_to_dfa(nfa, start, end, alphabet)
 
-print("DFA: \n", parcials)
+# print("DFA: \n", parcials)
+
+# *Refencias ...................................................
+# OpenAI. (2025). ChatGP https://chat.openai.com/chat
+# DeepSeek. (2025). Into the Unknown. https://chat.deepseek.com/
