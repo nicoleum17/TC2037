@@ -1,0 +1,50 @@
+#lang racket
+
+(define (validate automata cadenas)
+  ;; Obtenemos cada parte
+  (define estados (car automata))
+  (define alfabeto (cadr automata))
+  (define transiciones (caddr automata))
+  (define inicial (cadddr automata))
+  (define finales (car (cddddr automata)))
+
+  ;; Encontramos la transición
+  (define (findT estado simbolo transiciones)
+    (cond
+      ((null? transiciones) #f)
+      ((and (equal? (caar transiciones) estado)
+            (equal? (cadar transiciones) simbolo))
+       (caddar transiciones))
+      (else (findT estado simbolo (cdr transiciones)))))
+
+  ;; Recorrer la cadena
+  (define (acepta? cadena)
+    (let loop ((estado-actual inicial)
+               (simbolos cadena))
+      (cond
+        ((null? simbolos) 
+         (not (not (member estado-actual finales))))
+        (else
+         (let ((next (findT estado-actual (car simbolos) transiciones)))
+           (if next
+               (loop next (cdr simbolos))
+               #f))))))
+
+  ;; Aplicamos la función a todas las cadenas
+  (map acepta? cadenas))
+
+;; Ejemplo de uso
+(define ejemplo-automata
+  '((0 1 2 3 4)
+    (a b)
+    ((0 a 1) (0 b 2) (1 a 1) (1 b 3) (2 b 2) (2 a 1) (3 a 1) (3 b 4) (4 a 1) (4 b 2))
+    0
+    (4)))
+
+(define ejemplo-entradas
+  '((a b a b a a b b)
+    (a a a a a a b)
+    (a b a b a b b)
+    (a b)))
+
+(validate ejemplo-automata ejemplo-entradas)  ;; Devuelve (#t #f #t #f)

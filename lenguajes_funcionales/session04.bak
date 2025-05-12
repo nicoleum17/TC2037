@@ -1,0 +1,35 @@
+#lang racket
+(define lst '(1 2 3 4 5 6 7 8 9 10))
+
+(define count
+  (lambda (lst)
+    (cond
+      [(null? lst) 0]
+      [else (+ 1 (count (cdr lst)))])))
+
+(define sum
+  (lambda (lst)
+    (cond
+      [(null? lst) 0]
+      [else (+ (car lst)
+               (sum (cdr lst)))])))
+
+(define count-even
+  (lambda (lst)
+    (cond
+      [(null? lst) 0]
+      ;; (equal? (remainder (car lst) 2) 0)
+      [(even? (car lst))
+       (+ 1 (count-even (cdr lst)))]
+      [else (count-even (cdr lst))])))
+
+(define greater
+  (lambda (lst)
+    (cond
+      [(null? lst) 'error]
+      [(null? (cdr lst)) (car lst)]
+      [else
+       (let ((result (greater (cdr lst))))
+         (if (> (car lst) result)
+             (car lst)
+             result))])))

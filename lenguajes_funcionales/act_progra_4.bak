@@ -1,0 +1,7 @@
+#lang racket
+
+(define powkitty
+  (lambda (n p)
+         (cond
+           [(= p 0) 1]
+           [else (* n (powkitty n (sub1 p)))])))

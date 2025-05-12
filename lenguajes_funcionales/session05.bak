@@ -1,0 +1,21 @@
+#lang racket
+(define inc1
+  (lambda (lst)
+    (cond
+      [(null? lst) '()]
+      [else (cons (add1 (car lst))
+                  (inc1 (cdr lst)))])))
+
+(define append2
+  (lambda (lst1 lst2)
+    (cond
+      [(null? lst1) lst2]
+      [else (cons (car lst1)
+                  (append2 (cdr lst1) lst2))])))
+
+(define reverse2
+  (lambda (lst)
+    (cond
+      [(null? lst) '()]
+      [else (append (reverse2 (cdr lst))
+                    (list (car lst)))])))

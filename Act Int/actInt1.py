@@ -1,15 +1,24 @@
 
+# *..........................Actividad Integradora 1...........................
+#   Convertir una expresión regular a NFA y luego a DFA.
+# 
+#   By: Joanna Nicole Uriostegui Magaña
+#       A01711853
+#       14/03/25
+
 # *.............................. FUNCIONES ...................................
 
 # ? Agregar Concatenacion .....................................................
 #   Agrega la concatenación a la expresión regular.
-#   @param {str} expresion: la expresión regular a concatenar
-#   @return {str} la expresión regular en formato con concatenacion explicita
+#   Parámetros: expresion: la expresión regular a concatenar.
+#   Return: la expresión regular en formato con concatenacion explicita.
+#   Complejidada: O(n)
 # ? ...........................................................................
 
 def agregar_concatenacion(expresion):
+    # Para los que no se tienen que concatgenar
     salida = ""
-    operadores = {'|', '*', '+', '?', '('}  # Operadores que no requieren concatenación antes
+    operadores = {'|', '*', '+', '?', '('}
     
     for i in range(len(expresion)):
         actual = expresion[i]
@@ -35,8 +44,9 @@ def agregar_concatenacion(expresion):
 # ? Shuting Yard ..............................................................
 #   Convierte la expresión regular en formato infijo
 #   a formato posfijo.
-#   @param {str} regEx: la expresión regular a convertir
-#   @return {str} la expresión regular en formato posfijo
+#   Parámetros: la expresión regular a convertir
+#   Return: la expresión regular en formato posfijo
+#   Complejidada: O(n)
 # ? ...........................................................................
 def shunting_yard(regEx):
     precedence = {'*': 3, '+': 3, '.': 2, '|': 1}
@@ -45,7 +55,7 @@ def shunting_yard(regEx):
 
     for i in regEx:
         if i.isalnum(): 
-            # 
+            # pasar el alphabet
             output.append(i)
         elif i == '(':
             stack.append(i) 
@@ -54,18 +64,21 @@ def shunting_yard(regEx):
                 output.append(stack.pop())
             stack.pop()
         else:
+            # Cuando ya llega al final de operadores
             while stack and stack[-1] != '(' and precedence[stack[-1]] >= precedence[i]:
                 output.append(stack.pop())
             stack.append(i)
     while stack:
+        # Se agrega el resto de la expresión
         output.append(stack.pop())
     return ''.join(output)
 
 # ? RegEx to NFA...............................................................
 #   Convierte la expresión regular en formato posfijo
 #   a un automata no determinista finito (NFA).
-#   @param {str} regEx: la expresión regular en posfijo
-#   @return {str} el automata NFA
+#   Parámetros:  la expresión regular en posfijo
+#   Return:  el automata NFA
+#   Complejidada: O(n)
 # ? ...........................................................................
 def regEx_to_nfa(regEx):
     stack = []
@@ -123,36 +136,13 @@ def regEx_to_nfa(regEx):
     nfa, start, end = stack.pop()
     return nfa, start, end
 
-# ? Bubble Sort ...............................................................
-#   Ordena el nfa de menor a mayor.
-#   @param {str} nfa: el automata NFA
-#   @return {str} el nfa con los estados ordenados.
-# ? ...........................................................................
-def bubble_Sort(nfa):
-    keys = list(nfa.keys())
-    n = len(keys)
-    
-    for i in range(n):
-        swapped = False
-        
-        for j in range(0, n - i - 1):
-            if keys[j] > keys[j + 1]:
-                keys[j], keys[j + 1] = keys[j + 1], keys[j]
-                swapped = True
-    
-        if not swapped:
-            break
-    
-    # Volvemos al diccionario 
-    return {key: nfa[key] for key in keys}
-
 # ? Cerrandura epsilon.........................................................
 #   Cerramos el clousure de epsilon para el NFA.
-#   @param {str} nfa: el automata NFA
-#   @return {str} el NFA con el clousure de epsilon cerrado.
+#   Parámetros: el automata NFA
+#   Return: el NFA con el clousure de epsilon cerrado.
+#   Complejidada: O(n_estados + n_transiciones)
 # ? ...........................................................................
 def e_closure(nfa, estados):
-    """ Calcula la cerradura epsilon de un conjunto de estados """
     closure = set(estados)
     stack = list(estados)  # Usamos una pila para recorrer los estados
 
@@ -160,6 +150,7 @@ def e_closure(nfa, estados):
         estado = stack.pop()
         if estado in nfa:  # Verificamos si el estado tiene transiciones
             for siguiente, simbolo in nfa[estado]:
+                # Agregamos los estados a los que se puede llegar mediante #
                 if simbolo == "#" and siguiente not in closure:
                     closure.add(siguiente)
                     stack.append(siguiente)
@@ -168,12 +159,14 @@ def e_closure(nfa, estados):
 
 # ? Move.......................................................................
 #   Por cada símbolo en el alfabeto, se mueve a la siguiente transición
-#   @param {str} nfa: el automata NFA
-#   @return {str} el NFA con el clousure de epsilon cerrado.
+#   Parámetros: el automata NFA, conjunto de estados, símbolo del alfabeto
+#   Return: estados a los que se puede llegar con dicho peso
+#   Complejidada: O(n_estados)
 # ? ...........................................................................
 def move(nfa, estados, simbolo):
-    """ Devuelve el conjunto de estados alcanzables desde `estados` con `simbolo` """
     resultado = set()
+    # Para recorrer obtener los valores a los que se puede llegar desde los
+    # estados del conjunto mediante algun simbolo del alfabeto.
     for estado in estados:
         if estado in nfa:
             for siguiente, s in nfa[estado]:
@@ -183,27 +176,32 @@ def move(nfa, estados, simbolo):
 
 # ? NFA a DFA .................................................................
 #   Convierte el NFA a DFA
-#   @param {str} nfa: el automata NFA
-#   @return {str} el automata DFA
+#   Parámetros: el automata NFA
+#   Return: el automata DFA
+#   Complejidada: O(2 ^(n_estados))
 # ? ...........................................................................
 def nfa_to_dfa(nfa, start, end, alphabet):
-    """ Convierte un NFA a DFA usando el algoritmo de e-closure """
     dfa = {}
     estados_dfa = {}
     aceptacion_dfa = set()
     
+    # Para el primer estado obtenemos su conjunto por cerrandura epsilon
     estado_inicial = frozenset(e_closure(nfa, {start}))
     estados_dfa[estado_inicial] = "A"
     pendientes = [estado_inicial]
-    contador = ord("A")  # Para asignar nombres a los estados DFA
+    # Para obtener la numeración de estados pero en orden alfabético
+    contador = ord("A") 
     
+    # Recorremos todos los conjuntos que se obtienen de los estados
     while pendientes:
         actual = pendientes.pop(0)
         estado_nombre = estados_dfa[actual]
         dfa[estado_nombre] = []
         
+        # Para cada simbolo del alfabeto realizamos un move
         for simbolo in alphabet:
             mov = move(nfa, actual, simbolo)
+            # Comparamos si el conjunto obtenido es nuevo
             if mov:
                 nuevo_estado = frozenset(e_closure(nfa, mov))
                 if nuevo_estado not in estados_dfa:
@@ -211,43 +209,50 @@ def nfa_to_dfa(nfa, start, end, alphabet):
                     estados_dfa[nuevo_estado] = chr(contador)
                     pendientes.append(nuevo_estado)
                 
+                # Si es nuevo, se agrega a la cola
                 dfa[estado_nombre].append((estados_dfa[nuevo_estado], simbolo))
                 
+                # Agregamos si es estado de aceptación
                 if end in nuevo_estado:
                     aceptacion_dfa.add(estados_dfa[nuevo_estado])
     
-    # Formateo de salida
+    # Imprimimos en pantalla el DFA ordenado
     print("\nDFA:")
     for estado in sorted(dfa.keys()):
-        print(f"{estado} => {dfa[estado]}")
+        print(estado, "=>", dfa[estado])
     
+    # Y los estados de aceptación
     print("Accepting states:", sorted(list(aceptacion_dfa)))
-    
-    return dfa, "A", sorted(list(aceptacion_dfa))
-
 # *............................... CODIGO ......................................
 
-#alphabet = input("Alphabet: ")
-#regEx = input("RegEx: ")
-alphabet = "01"
-regEx = "(0|1)0(0|1)*"
+alphabet = input("Alphabet: ")
+regEx = input("RegEx: ")
 
+# Agregar los puntos para indicar concatenación 
+# y pasamos la expresión a formato posfijo.
 posExp = shunting_yard(agregar_concatenacion(regEx))
+
+print(posExp)
 
 print("\n----RESULTS----")
 print("INPUT:")
 print(regEx)
 
+# Obtenemos el NFA
 nfa, start, end = regEx_to_nfa(posExp)
-nfa = bubble_Sort(nfa)
 
+# Lo mostramos en pantalla
 print("\nNFA:")
-for i in nfa:
-    print(i, "=>", nfa[i])
-print("Accepting state: ", end);
+for estado in sorted(nfa.keys()):
+    print(estado, "=>", nfa[estado])
+print("Accepting state:", end)
 
+# Obtenemos y mostramos el DFA
 nfa_to_dfa(nfa, start, end, alphabet)
 
 # *Refencias ...................................................
-# OpenAI. (2025). ChatGP https://chat.openai.com/chat
-# DeepSeek. (2025). Into the Unknown. https://chat.deepseek.com/
+#  - OpenAI. (2025). ChatGP https://chat.openai.com/chat
+#  - DeepSeek. (2025). Into the Unknown. https://chat.deepseek.com/
+#  - Chaves, S. (2023, July 31). 
+#    ¿Cuáles son las principales funciones en Python? Formadores IT. 
+#    https://formadoresit.es/cuales-son-las-principales-funciones-en-python/
